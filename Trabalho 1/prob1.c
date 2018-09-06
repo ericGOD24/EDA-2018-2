@@ -27,7 +27,7 @@ int main(int argc, char const *argv[]) {
     scanf("%lf", &W[i]);
   }
 
-  fneuronio(X, W, T, MAX, &result);
+  fneuronio(X, W, T, &result);
 
   if(!(result)){
     printf("\n Neuronio inibido!\n\n");
@@ -42,16 +42,16 @@ int main(int argc, char const *argv[]) {
 
 void fneuronio(double *X, double *W, double T, int *result) {
   int k;
-  double SOMAP;
+  double SOMAP = 0;
 
     for(k = 0; k < MAX; k++){
       SOMAP += (X[k] * W[k]);
     }
 
-    if (SOMAP <= T) {
+    if (SOMAP <= T){
       *result = 0;
     }
     else{
-      *result = 1
+      *result = 1;
     }
 }
