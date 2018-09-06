@@ -1,3 +1,8 @@
+/*
+  Érico Bandeira - 16/0070287
+  Max Henrique Barbosa - 16/0047013
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #define MAX 10
