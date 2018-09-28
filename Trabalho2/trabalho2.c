@@ -11,9 +11,11 @@
 
 // DECLARACAO DE FUNCOES
 
-void alocaMatriz(int **vetorImagens);
+void alocaMatriz(int **);
 int gerarNumeroAleatorio ();
-void selecionarGrama (int *grama, char *nomeArquivo);
+void selecionarGrama (int *, char *);
+void fazIlbpQuadrante(int **,int ,int ,double **,int);
+
 
 // MAIN
 int main(int argc, char const *argv[]) {
@@ -27,29 +29,27 @@ int main(int argc, char const *argv[]) {
   char nomeArquivo[20] = "", aux;
   static int asfalto[50], grama[50];
 
-    if(
-      mediaGrama = (double*)calloc(536,sizeof(double)),mediaGrama == NULL){
+    if(mediaGrama = (double*)calloc(536,sizeof(double)),mediaGrama == NULL){
+      printf("alocação falhou!\n");
+      exit(1);
+    }
+
+    if(mediaAsfalto = (double*)calloc(536,sizeof(double)),mediaAsfalto == NULL){
       printf("alocação falhou!\n");
       exit(1);
     }
 
     if(
-      mediaAsfalto = (double*)calloc(536,sizeof(double)),mediaAsfalto == NULL){
+      aspectos = (double**)calloc(50,sizeof(double*)),aspectos == NULL){
       printf("alocação falhou!\n");
       exit(1);
     }
-
-    // if(
-    //   aspectos = (double**)calloc(50,sizeof(double*)),aspectos == NULL){
-    //   printf("alocação falhou!\n");
-    //   exit(1);
-    // }
-    // for(i = 0; i < 50; i++){
-    //   if(*(aspectos+i) = (double*)calloc(TAMVET,sizeof(double)),*(aspectos+i) == NULL){
-    //     printf("alocação falhou!\n");
-    //     exit(1);
-    //   }
-    // }
+    for(i = 0; i < 50; i++){
+      if(*(aspectos+i) = (double*)calloc(TAMVET,sizeof(double)),*(aspectos+i) == NULL){
+        printf("alocação falhou!\n");
+        exit(1);
+      }
+    }
 
   free(fp);
   return 0;
