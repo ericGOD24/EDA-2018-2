@@ -14,7 +14,8 @@
 void alocaMatriz(int **);
 int gerarNumeroAleatorio ();
 void selecionarGrama (int *, char *);
-void fazIlbpQuadrante(int **,int ,int ,double **,int);
+void ilbp(int **,int ,int ,double **, int);
+void ilbpQuadrante(int **,int ,int ,double **,int);
 
 
 // MAIN
@@ -22,7 +23,7 @@ int main(int argc, char const *argv[]) {
 
   FILE *fp;
   int **vetorImagens;
-  int linhas, colunas, i, j, cont, contCol, contLine, pixel;
+  int linha, coluna, i, j, cont, pixel;
   int taxaAcerto = 0, taxaFalsaRejeicao = 0, taxaFalsaAceitacao = 0;
   double *mediaGrama, *mediaAsfalto;
   double **aspectos;
@@ -78,5 +79,54 @@ void selecionarAsfalto (int *asfalto, char *nomeArquivo){
 //-------------------------------------------------------------------------
 void treinoDeMetricas (){
 
+}
+//-------------------------------------------------------------------------
+void ilbp(int **vetorImagens,int linha,int colunas,double **aspectos,int cont){
+  int i,j;
+  for(i = 1; i < linha-1; i++) {
+    for (j = 1; j < colunas-1; j++) {
+      fazIlbpQuadrante(vetorImagens,i,j,aspectos,cont);
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+int AchaMenorValor(int *vetor,int menor,int cont){
+  int n;
+  if (cont == 9) {
+    return menor;
+  } else {
+    n = fazBinParaDecimal(vetor);
+    if (n < menor) {
+      menor = n;
+    }
+    rotacionaVetor(vetor);
+    return AchaMenorValor(vetor,menor,cont+1);
+  }
+}
+//-------------------------------------------------------------------------
+void ilbpQuadrante(int **vetorImagens,int linha,int coluna,double **aspectos,int aux){
+  double total=0.0;
+  int cont=0,menorValor;
+  int vetor[9];
+  for (int i = linha-1; i <= linha+1; i++) {
+    for (int j = coluna-1; j <= coluna+1; j++) {
+      total += *(*(matriz+i)+j);
+      vetor[cont] = matriz[i][j];
+      cont++;
+    }
+  }
+  for (int i = 0; i < 9; i++) {
+    if (total/9 >= vetor[i]) {
+      vetor[i] = 1;
+    } else {
+      vetor[i] = 0;
+    }
+  }
+  menorValor = AchaMenorValor(vetor,TAMCOD,0);
+  if (aux%2) {
+    caracteristicas[(aux-1)/2][menorValor]+=1;
+  } else {
+    caracteristicas[IMAGENS/2+aux/2][menorValor]+=1;
+  }
 }
 //-------------------------------------------------------------------------
