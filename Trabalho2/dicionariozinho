@@ -1,0 +1,9 @@
+TAMCOD  	= 256
+IMAGENS 	= 50
+TAMVET		= 536
+
+contCol 	= colula
+contLine	= linha
+caracteristicas = aspectos
+matriz		= vetorImagens
+
