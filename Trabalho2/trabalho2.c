@@ -435,14 +435,14 @@ void imagensParaTreino(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int *
   int pixel;
   char aux;
   if (seletor) {
-    strcat(nomeArquivo,"grass/grass_");
+    strcat(nomeArquivo,"DataSet/grass/grass_");
     while(grama[cont]) {
       cont++;
     }
     numeroAleatorio = cont+1;
     grama[cont] = 1;
   } else {
-    strcat(nomeArquivo,"asphalt/asphalt_");
+    strcat(nomeArquivo,"DataSet/asphalt/asphalt_");
     while(asfalto[cont]) {
       cont++;
     }
@@ -476,14 +476,14 @@ void selecionaImagem(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int **v
   int pixel;
   char aux;
   if (seletor) {
-    strcat(nomeArquivo,"grass/grass_");
+    strcat(nomeArquivo,"DataSet/grass/grass_");
     numeroAleatorio = gerarNumeroAleatorio();
     while(grama[numeroAleatorio-1]) {
       numeroAleatorio = gerarNumeroAleatorio();
     }
     grama[numeroAleatorio-1] = 1;
   } else {
-    strcat(nomeArquivo,"asphalt/asphalt_");
+    strcat(nomeArquivo,"DataSet/asphalt/asphalt_");
     numeroAleatorio = gerarNumeroAleatorio();
     while(asfalto[numeroAleatorio-1]) {
       numeroAleatorio = gerarNumeroAleatorio();
