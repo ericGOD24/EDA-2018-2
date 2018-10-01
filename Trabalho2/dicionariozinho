@@ -1,9 +1,23 @@
-TAMCOD  	= 256
-IMAGENS 	= 50
-TAMVET		= 536
+TAMCOD  		= 256
+IMAGENS 		= 50
+TAMVET			= 536
 
-contCol 	= colula
-contLine	= linha
-caracteristicas = aspectos
-matriz		= vetorImagens
+contCol 		= coluna
+contLine		= linha
+caracteristicas 	= aspectos
+matriz			= vetorImagens
 
+fazMedia		= mediaPontos
+normalizaVetor		= normalizaVetor
+rotacionaVetor		= rotacionaVetor
+fazBinParaDecimal	= transformaBinDecimal
+slecionaImagens		= ainda não fizemos nada
+ilbp			= ilbp
+fazIlbpQuadrante	= ilbpQuadrante
+AchaMenorValor		= menorValor
+fazEuclidiana		= euclidiana
+glcm			= glcm
+calculaContraste	= contraste
+calculaHomogeneidade	= homogeneidade
+calculaEnergia		= energia
+selecionaImagensTreino	= imagensParaTreino

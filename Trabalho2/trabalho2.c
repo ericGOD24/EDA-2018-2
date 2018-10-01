@@ -9,11 +9,16 @@
 
 
 
-// DECLARACAO DE FUNCOES
+//-------------------- DECLARACAO DE FUNCOES ---------------------
 
 int gerarNumeroAleatorio ();
-int AchaMenorValor(int *,int ,int);
+int menorValor(int *,int ,int);
 int transformaBinDecimal(int *);
+
+double energia(int **);
+double contraste(int **);
+double homogeneidade(int **);
+
 void selecionarGrama (int *, char *);
 void ilbp(int **,int ,int ,double **, int);
 void ilbpQuadrante(int **,int ,int ,double **,int);
@@ -21,12 +26,11 @@ void alocaMatriz(int **);
 void rotacionaVetor(int *);
 void normalizaVetor(double *,int);
 void mediaPontos(double **,double *,double *);
+void glcm(int **, int, int , double **, int);
 void euclidiana(double **, double *, double *, int *, int *, int *);
+void imagensParaTreino(int *,int *,char *, FILE *, int **, int *, int *, int);
 
-
-
-
-// MAIN
+//------------------------------ MAIN -----------------------------
 int main(int argc, char const *argv[]) {
 
   FILE *fp;
@@ -106,28 +110,28 @@ int transformaBinDecimal(int *bin){
   return decimal;
 }
 //-----------------------------------------------------------------------------
-int AchaMenorValor(int *vetor,int menor,int cont){
+int menorValor(int *vetor,int menor,int cont){
   int n;
   if (cont == 9) {
     return menor;
   } else {
-    n = fazBinParaDecimal(vetor);
+    n = transformaBinDecimal(vetor);
     if (n < menor) {
       menor = n;
     }
     rotacionaVetor(vetor);
-    return AchaMenorValor(vetor,menor,cont+1);
+    return menorValor(vetor,menor,cont+1);
   }
 }
 //-------------------------------------------------------------------------
 void ilbpQuadrante(int **vetorImagens,int linha,int coluna,double **aspectos,int aux){
   double total=0.0;
-  int cont=0,menorValor;
+  int cont=0,minValue;
   int vetor[9];
   for (int i = linha-1; i <= linha+1; i++) {
     for (int j = coluna-1; j <= coluna+1; j++) {
-      total += *(*(matriz+i)+j);
-      vetor[cont] = matriz[i][j];
+      total += *(*(vetorImagens+i)+j);
+      vetor[cont] = vetorImagens[i][j];
       cont++;
     }
   }
@@ -138,11 +142,11 @@ void ilbpQuadrante(int **vetorImagens,int linha,int coluna,double **aspectos,int
       vetor[i] = 0;
     }
   }
-  menorValor = AchaMenorValor(vetor,256,0);
+  minValue = menorValor(vetor,256,0);
   if (aux%2) {
-    aspectos[(aux-1)/2][menorValor]+=1;
+    aspectos[(aux-1)/2][minValue]+=1;
   } else {
-    aspectos[50/2+aux/2][menorValor]+=1;
+    aspectos[50/2+aux/2][minValue]+=1;
   }
 }
 //-------------------------------------------------------------------------
@@ -226,40 +230,40 @@ void euclidiana(double **aspectos, double *mediaAsfalto,double *mediaGrama,int *
 }
 //EU PAREI AS ALTERAÇÕES AQUI
 //-------------------------------------------------------------------------
-double contraste(int **matriz){
+double contraste(int **vetorImagens){
   int i,j;
   double total=0.0;
-  for (i = 0; i < TAMCOD; i++) {
-    for (j = 0; j < TAMCOD; j++) {
-      total += matriz[i][j]*pow(i-j,2);
+  for (i = 0; i < 256; i++) {
+    for (j = 0; j < 256; j++) {
+      total += vetorImagens[i][j]*pow(i-j,2);
     }
   }
   return total;
 }
 //-------------------------------------------------------------------------
-double homogeneidade(int **matriz){
+double homogeneidade(int **vetorImagens){
   int i,j;
   double total=0.0;
-  for (i = 0; i < TAMCOD; i++) {
-    for (j = 0; j < TAMCOD; j++) {
-      total += matriz[i][j]/(1+abs(i-j));
+  for (i = 0; i < 256; i++) {
+    for (j = 0; j < 256; j++) {
+      total += vetorImagens[i][j]/(1+abs(i-j));
     }
   }
   return total;
 }
 //-------------------------------------------------------------------------
-double energia(int **matriz){
+double energia(int **vetorImagens){
   int i,j;
   double total=0.0;
-  for (i = 0; i < TAMCOD; i++) {
-    for (j = 0; j < TAMCOD; j++) {
-      total += pow(matriz[i][j],2);
+  for (i = 0; i < 256; i++) {
+    for (j = 0; j < 256; j++) {
+      total += pow(vetorImagens[i][j],2);
     }
   }
   return total;
 }
 //-------------------------------------------------------------------------
-void glcm(int **matriz,int linha,int coluna,double **caracteristicas,int cont){
+void glcm(int **vetorImagens,int linha,int coluna,double **aspectos,int cont){
   int ***matrizesGlcm;
   int i,j,t;
 
@@ -267,11 +271,11 @@ void glcm(int **matriz,int linha,int coluna,double **caracteristicas,int cont){
     printf("alocação falhou!\n");
   }
 	for (i = 0; i < 8; i++) {
-    if(matrizesGlcm[i] = (int**)calloc(TAMCOD,sizeof(int*)),matrizesGlcm[i] == NULL){
+    if(matrizesGlcm[i] = (int**)calloc(256,sizeof(int*)),matrizesGlcm[i] == NULL){
       printf("alocação falhou!\n");
     }
-		for (j = 0; j < TAMCOD; j++) {
-      if(matrizesGlcm[i][j] = (int*)calloc(TAMCOD,sizeof(int)),matrizesGlcm[i][j] == NULL){
+		for (j = 0; j < 256; j++) {
+      if(matrizesGlcm[i][j] = (int*)calloc(256,sizeof(int)),matrizesGlcm[i][j] == NULL){
         printf("alocação falhou!\n");
       }
 		}
@@ -282,44 +286,44 @@ void glcm(int **matriz,int linha,int coluna,double **caracteristicas,int cont){
       for (j = 1; j < coluna-1; j++) {
         switch (t) {
           case 0:
-            matrizesGlcm[t][matriz[i][j]][matriz[i-1][j-1]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i-1][j-1]]++;
             break;
           case 1:
-            matrizesGlcm[t][matriz[i][j]][matriz[i-1][j]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i-1][j]]++;
             break;
           case 2:
-            matrizesGlcm[t][matriz[i][j]][matriz[i-1][j+1]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i-1][j+1]]++;
             break;
           case 3:
-            matrizesGlcm[t][matriz[i][j]][matriz[i][j-1]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i][j-1]]++;
             break;
           case 4:
-            matrizesGlcm[t][matriz[i][j]][matriz[i][j+1]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i][j+1]]++;
             break;
           case 5:
-            matrizesGlcm[t][matriz[i][j]][matriz[i+1][j-1]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i+1][j-1]]++;
             break;
           case 6:
-            matrizesGlcm[t][matriz[i][j]][matriz[i+1][j]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i+1][j]]++;
             break;
           case 7:
-            matrizesGlcm[t][matriz[i][j]][matriz[i+1][j+1]]++;
+            matrizesGlcm[t][vetorImagens[i][j]][vetorImagens[i+1][j+1]]++;
         }
       }
     }
     if (cont%2) {
-      caracteristicas[(cont-1)/2][512+3*t] = calculaEnergia(matrizesGlcm[t]);
-      caracteristicas[(cont-1)/2][512+3*t+1] = calculaHomogeneidade(matrizesGlcm[t]);
-      caracteristicas[(cont-1)/2][512+3*t+2] = calculaContraste(matrizesGlcm[t]);
+      aspectos[(cont-1)/2][512+3*t] = energia(matrizesGlcm[t]);
+      aspectos[(cont-1)/2][512+3*t+1] = homogeneidade(matrizesGlcm[t]);
+      aspectos[(cont-1)/2][512+3*t+2] = contraste(matrizesGlcm[t]);
     } else {
-      caracteristicas[IMAGENS/2+cont/2][512+3*t] = calculaEnergia(matrizesGlcm[t]);
-      caracteristicas[IMAGENS/2+cont/2][512+3*t+1] = calculaHomogeneidade(matrizesGlcm[t]);
-      caracteristicas[IMAGENS/2+cont/2][512+3*t+2] = calculaContraste(matrizesGlcm[t]);
+      aspectos[50/2+cont/2][512+3*t] = energia(matrizesGlcm[t]);
+      aspectos[50/2+cont/2][512+3*t+1] = homogeneidade(matrizesGlcm[t]);
+      aspectos[50/2+cont/2][512+3*t+2] = contraste(matrizesGlcm[t]);
     }
   }
 
   for (i = 0; i < 8; i++) {
-    for (j = 0; j < TAMCOD; j++) {
+    for (j = 0; j < 256; j++) {
       free(matrizesGlcm[i][j]);
     }
     free(matrizesGlcm[i]);
@@ -327,7 +331,7 @@ void glcm(int **matriz,int linha,int coluna,double **caracteristicas,int cont){
   free(matrizesGlcm);
 }
 //-------------------------------------------------------------------------
-void selecionaImagensTreino(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int **matriz,int *contLine,int *contCol,int seletor){
+void imagensParaTreino(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int **vetorImagens,int *linha,int *coluna,int seletor){
   int cont=0,numeroAleatorio;
   char stringNumeroAleatorio[4];
   int pixel;
@@ -357,14 +361,14 @@ void selecionaImagensTreino(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,
   while(!feof(arq)){
     fscanf(arq, "%d%c",&pixel,&aux);
     if(aux == ';'){
-      *contCol += 1;
+      *coluna += 1;
     }
     else if(aux == '\n'){
-      *contLine += 1;
+      *linha += 1;
     }
   }
-  *contLine -= 1;
-  *contCol = *contCol/(*contLine)+1;
+  *linha -= 1;
+  *coluna = *coluna/(*linha)+1;
   fclose(arq);
 }
 //-------------------------------------------------------------------------
