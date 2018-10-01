@@ -102,7 +102,7 @@ void ilbp(int **vetorImagens,int linha,int colunas,double **aspectos,int cont){
   }
 }
 //-----------------------------------------------------------------------------
-int transformaBinDecimal(int *bin){
+int transformaBinDecimal(int *bin){//Transforma Binário para Decimal
   int decimal=0;
   for (int i = 0; i < 9; i++) {
     decimal += pow(2,(8-i))*bin[i];
@@ -110,7 +110,7 @@ int transformaBinDecimal(int *bin){
   return decimal;
 }
 //-----------------------------------------------------------------------------
-int menorValor(int *vetor,int menor,int cont){
+int menorValor(int *vetor,int menor,int cont){//Encontra o menor valor do vetor de decimal
   int n;
   if (cont == 9) {
     return menor;
