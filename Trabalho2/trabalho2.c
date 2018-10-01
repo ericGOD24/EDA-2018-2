@@ -19,7 +19,7 @@ double energia(int **);
 double contraste(int **);
 double homogeneidade(int **);
 
-void selecionarGrama (int *, char *);
+void selecionarImagem (int *,int *,char *,FILE *,int **,int *,int *,int);
 void ilbp(int **,int ,int ,double **, int);
 void ilbpQuadrante(int **,int ,int ,double **,int);
 void alocaMatriz(int **);
@@ -36,7 +36,7 @@ int main(int argc, char const *argv[]) {
   FILE *fp;
   int **vetorImagens;
   int linha, coluna, i, j, cont, pixel;
-  int taxaAcerto = 0, taxaFalsaRejeicao = 0, taxaFalsaAceitacao = 0;
+  int acerto = 0, falsaRejeicao = 0, falsaAceitacao = 0;
   double *mediaGrama, *mediaAsfalto;
   double **aspectos;
   char nomeArquivo[20] = "", aux;
@@ -64,33 +64,131 @@ int main(int argc, char const *argv[]) {
       }
     }
 
-  free(fp);
+    for (cont = 0; cont < 50; cont++) {
+
+    linha=0;
+    coluna=0;
+
+    selecionarImagem(asfalto,grama,nomeArquivo,arq,vetorImagens,&linha,&coluna,cont%2);
+
+    if(vetorImagens = (int**)malloc(linha*sizeof(int*)),vetorImagens == NULL){
+      printf("alocação falhou!\n");
+    }
+    for(i = 0; i<linha; i++){
+      if(*(vetorImagens+i) = (int*)malloc(coluna*sizeof(int)),*(vetorImagens+i) == NULL){
+        printf("alocação falhou!\n");
+      }
+    }
+
+    if(arq = fopen(nomeArquivo,"r"),arq == NULL){
+      printf("erro ao abrir o arquivo!\n");
+      exit(1);
+    }
+    for(i = 0; i<linha; i++)
+      for(j = 0; j<coluna; j++){
+        fscanf(arq,"%d%c",&pixel,&aux);
+        *(*(vetorImagens+i)+j) = pixel;
+      }
+
+    ilbp(vetorImagens,linha,coluna,aspectos,cont);
+    glcm(vetorImagens,linha,coluna,aspectos,cont);
+
+
+    fclose(arq);
+
+    for(i = 0; i<linha; i++){
+      free(*(vetorImagens+i));
+    }
+    free(vetorImagens);
+
+    strcpy(nomeArquivo, "" );
+
+  }
+
+  for (i = 0; i < 50; i++) {
+    normalizaVetor(*(aspectos+i),536);
+  }
+
+  mediaPontos(aspectos,mediaGrama,mediaAsfalto);
+
+  for(i = 0; i<50; i++){
+    free(*(aspectos+i));
+  }
+  free(aspectos);
+
+  if(aspectos = (double**)calloc(50,sizeof(double*)),aspectos == NULL){
+    printf("alocação falhou!\n");
+    exit(1);
+  }
+  for(i = 0; i<50; i++){
+    if(*(aspectos+i) = (double*)calloc(536,sizeof(double)),*(aspectos+i) == NULL){
+      printf("alocação falhou!\n");
+      exit(1);
+    }
+  }
+
+  for (cont = 0; cont < 50; cont++) {
+
+    linha=0;
+    coluna=0;
+
+    selecionaImagensTreino(asfalto,grama,nomeArquivo,arq,vetorImagens,&linha,&coluna,cont%2);
+
+    if(vetorImagens = (int**)malloc(linha*sizeof(int*)),vetorImagens == NULL){
+      printf("alocação falhou!\n");
+    }
+    for(i = 0; i<linha; i++){
+      if(*(vetorImagens+i) = (int*)malloc(coluna*sizeof(int)),*(vetorImagens+i) == NULL){
+        printf("alocação falhou!\n");
+      }
+    }
+
+    if(arq = fopen(nomeArquivo,"r"),arq == NULL){
+      printf("erro ao abrir o arquivo!\n");
+      exit(1);
+    }
+    for(i = 0; i<linha; i++)
+      for(j = 0; j<coluna; j++){
+        fscanf(arq,"%d%c",&pixel,&aux);
+        *(*(vetorImagens+i)+j) = pixel;
+    }
+
+    ilbp(vetorImagens,linha,coluna,aspectos,cont);
+    glcm(vetorImagens,linha,coluna,aspectos,cont);
+
+    fclose(arq);
+
+    for(i = 0; i<linha; i++){
+      free(*(vetorImagens+i));
+    }
+    free(vetorImagens);
+
+    strcpy(nomeArquivo, "" );
+  }
+
+  for (i = 0; i < 50; i++) {
+    normalizaVetor(*(aspectos+i),536);
+  }
+
+  euclidiana(aspectos,mediaAsfalto,mediaGrama,&acerto,&falsaAceitacao,&falsaRejeicao);
+  printf("Taxa de Acerto: %d%%\n",acerto*100/50);
+  printf("Taxa de Falsa Aceitação: %d%%\n",falsaAceitacao*100/50);
+  printf("Taxa de Falsa Rejeição: %d%%\n",falsaRejeicao*100/50);
+
+  for(i = 0; i<50; i++){
+    free(*(aspectos+i));
+  }
+
+  free(aspectos);
+  free(mediaGrama);
+  free(mediaAsfalto);
+
   return 0;
 }
-//-------------------------------------------------------------------------
+//-------------------------------FUNÇÕES-----------------------------------
 int gerarNumeroAleatorio (){ //Gerar numeros aleatórios para selicionar arquivos
   srand(time(NULL));
   return (rand() % 50) + 1;
-}
-//-------------------------------------------------------------------------
-void selecionarGrama (int *grama, char *nomeArquivo){
-  int nAleatorio;
-
-  nAleatorio = gerarNumeroAleatorio ();
-  sprintf(nomeArquivo, "./DataSet/grass/grass_%02d.txt", nAleatorio);
-  grama[nAleatorio-1] = 1;
-}
-//-------------------------------------------------------------------------
-void selecionarAsfalto (int *asfalto, char *nomeArquivo){
-  int nAleatorio;
-
-  nAleatorio = gerarNumeroAleatorio ();
-  sprintf(nomeArquivo, "./DataSet/asphalt/asphalt_%02d.txt", nAleatorio);
-  grama[nAleatorio-1] = 1;
-}
-//-------------------------------------------------------------------------
-void treinoDeMetricas (){
-
 }
 //-------------------------------------------------------------------------
 void ilbp(int **vetorImagens,int linha,int colunas,double **aspectos,int cont){
@@ -198,7 +296,7 @@ void mediaPontos(double **aspectos,double *mediaGrama,double *mediaAsfalto){
   }
 }
 //-------------------------------------------------------------------------
-void euclidiana(double **aspectos, double *mediaAsfalto,double *mediaGrama,int *taxaAcerto,int *taxaFalsaAceitacao,int *taxaFalsaRejeicao){
+void euclidiana(double **aspectos, double *mediaAsfalto,double *mediaGrama,int *acerto,int *falsaAceitacao,int *falsaRejeicao){
 
   double total = 0.0,distEuclidGrama,distEuclidAsfalto;
   int i,j;
@@ -215,15 +313,15 @@ void euclidiana(double **aspectos, double *mediaAsfalto,double *mediaGrama,int *
     total = 0.0;
     if (i < 50/2) {
       if (distEuclidGrama < distEuclidAsfalto) {
-        *taxaAcerto += 1;
+        *acerto += 1;
       } else {
-        *taxaFalsaRejeicao += 1;
+        *falsaRejeicao += 1;
       }
     } else{
       if (distEuclidGrama > distEuclidAsfalto) {
-        *taxaAcerto += 1;
+        *acerto += 1;
       } else {
-        *taxaFalsaAceitacao += 1;
+        *falsaAceitacao += 1;
       }
     }
   }
@@ -372,3 +470,43 @@ void imagensParaTreino(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int *
   fclose(arq);
 }
 //-------------------------------------------------------------------------
+void selecionaImagem(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int **vetorImagens,int *linha,int *coluna,int seletor){
+  int numeroAleatorio;
+  char stringNumeroAleatorio[4];
+  int pixel;
+  char aux;
+  if (seletor) {
+    strcat(nomeArquivo,"grass/grass_");
+    numeroAleatorio = gerarNumeroAleatorio();
+    while(grama[numeroAleatorio-1]) {
+      numeroAleatorio = gerarNumeroAleatorio();
+    }
+    grama[numeroAleatorio-1] = 1;
+  } else {
+    strcat(nomeArquivo,"asphalt/asphalt_");
+    numeroAleatorio = gerarNumeroAleatorio();
+    while(asfalto[numeroAleatorio-1]) {
+      numeroAleatorio = gerarNumeroAleatorio();
+    }
+    asfalto[numeroAleatorio-1] = 1;
+  }
+  sprintf(stringNumeroAleatorio,"%02d",numeroAleatorio);
+  strcat(nomeArquivo,stringNumeroAleatorio);
+  strcat(nomeArquivo,".txt");
+  if(arq = fopen(nomeArquivo,"r"),arq == NULL){
+    printf("erro ao abrir o arquivo!\n");
+    exit(1);
+  }
+  while(!feof(arq)){
+    fscanf(arq, "%d%c",&pixel,&aux);
+    if(aux == ';'){
+      *coluna += 1;
+    }
+    else if(aux == '\n'){
+      *linha += 1;
+    }
+  }
+  *linha -= 1;
+  *coluna = *coluna/(*linha)+1;
+  fclose(arq);
+}
