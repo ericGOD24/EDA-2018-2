@@ -19,7 +19,7 @@ double energia(int **);
 double contraste(int **);
 double homogeneidade(int **);
 
-void selecionarImagem (int *,int *,char *,FILE *,int **,int *,int *,int);
+void selecionaImagem (int *,int *,char *,FILE *,int **,int *,int *,int);
 void ilbp(int **,int ,int ,double **, int);
 void ilbpQuadrante(int **,int ,int ,double **,int);
 void alocaMatriz(int **);
@@ -33,7 +33,7 @@ void imagensParaTreino(int *,int *,char *, FILE *, int **, int *, int *, int);
 //------------------------------ MAIN -----------------------------
 int main(int argc, char const *argv[]) {
 
-  FILE *fp;
+  FILE *arq;
   int **vetorImagens;
   int linha, coluna, i, j, cont, pixel;
   int acerto = 0, falsaRejeicao = 0, falsaAceitacao = 0;
@@ -69,7 +69,7 @@ int main(int argc, char const *argv[]) {
     linha=0;
     coluna=0;
 
-    selecionarImagem(asfalto,grama,nomeArquivo,arq,vetorImagens,&linha,&coluna,cont%2);
+    selecionaImagem(asfalto,grama,nomeArquivo,arq,vetorImagens,&linha,&coluna,cont%2);
 
     if(vetorImagens = (int**)malloc(linha*sizeof(int*)),vetorImagens == NULL){
       printf("alocação falhou!\n");
@@ -132,7 +132,7 @@ int main(int argc, char const *argv[]) {
     linha=0;
     coluna=0;
 
-    selecionaImagensTreino(asfalto,grama,nomeArquivo,arq,vetorImagens,&linha,&coluna,cont%2);
+    imagensParaTreino(asfalto,grama,nomeArquivo,arq,vetorImagens,&linha,&coluna,cont%2);
 
     if(vetorImagens = (int**)malloc(linha*sizeof(int*)),vetorImagens == NULL){
       printf("alocação falhou!\n");
@@ -203,7 +203,7 @@ void ilbp(int **vetorImagens,int linha,int colunas,double **aspectos,int cont){
 int transformaBinDecimal(int *bin){//Transforma Binário para Decimal
   int decimal=0;
   for (int i = 0; i < 9; i++) {
-    decimal += pow(2,(8-i))*bin[i];
+    decimal += pow(2,(8-i)) * bin[i];
   }
   return decimal;
 }
@@ -259,7 +259,7 @@ void rotacionaVetor(int *vetor){
   }
 }
 //-------------------------------------------------------------------------
-void normalizaVetor(double *vetor,int 536or){
+void normalizaVetor(double *vetor,int tamVetor){
 
   int maior=0,menor=10000,i;
   for (i = 0; i < tamVetor; i++) {
