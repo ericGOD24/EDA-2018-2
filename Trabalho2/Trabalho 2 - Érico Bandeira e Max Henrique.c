@@ -326,7 +326,6 @@ void euclidiana(double **aspectos, double *mediaAsfalto,double *mediaGrama,int *
     }
   }
 }
-//EU PAREI AS ALTERAÇÕES AQUI
 //-------------------------------------------------------------------------
 double contraste(int **vetorImagens){
   int i,j;
