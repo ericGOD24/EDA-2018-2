@@ -29,7 +29,7 @@ Contato *inserirContato(Contato *);
 Contato *removerContato(Contato *, char name[]);
 
 //------------------------------------------------------------------------------
-main(int argc, char const *argv[]){
+int main(int argc, char const *argv[]){
   FILE *fp;
   Contato *lista;
   char select, c, modo, name[101];
@@ -67,7 +67,7 @@ main(int argc, char const *argv[]){
       printf("Digite o nome do contato que deseja ver:\n");
       scanf("%[^\n]", name);
       getchar();
-      visualizarRegistro(lista, name);
+      visualizarContato(lista, name);
       strcpy(name, "");
       voltar();
     break;
@@ -146,7 +146,7 @@ Contato *carregaArquivo() {
       printf("alocação falhou!\n");
     }
     fscanf(fp, "%[^\n]\n%s\n%[^\n]\n%u\n%s\n%c\n", contatos->name, contatos->cel, contatos->adress, &contatos->cep, contatos->date, &c);
-    primeiro = insertSort(primeiro, contatos);
+    primeiro = insertionSort(primeiro, contatos);
   }
 
   fclose(fp);
@@ -211,7 +211,7 @@ Contato *inserirContato(Contato * lista){
     getchar();
   }
 
-  while (!validaCelular(novo->cel));
+  while (!validaNumero(novo->cel));
   printf("Digite o endereço do novo contato:\n");
 
   scanf("%[^\n]", novo->adress);
