@@ -1,5 +1,5 @@
 /*  Max Henrique Barbosa - 16/0047013
-    Érico Maximiano - 16/0070287 */
+    Érico Maximiano Bandeira - 16/0070287 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,11 +17,10 @@ typedef struct contato {
   struct contato *ante;
 } Contato;
 
-void menu();
 void voltar();
 void salvaLista(Contato *);
 void visualizarContato(Contato *, char name[]); 
-void visualizarTodosContatos(Contato *, char);
+void visualizarTodosContatos(Contato *);
 int validaNumero(char cel[]);
 Contato *carregaArquivo();
 Contato *insertionSort(Contato *, Contato *);
@@ -37,7 +36,14 @@ int main(int argc, char const *argv[]){
   lista = carregaArquivo();
 
   do {
-    menu();
+    
+    printf("\n=========================================================================\n");
+    printf("||\t0. Sair                                                        ||\n");
+    printf("||\t1. Inserir novo registro                                       ||\n");
+    printf("||\t2. Remover registros que possuem o nome indicado               ||\n");
+    printf("||\t3. Visualizar registros que possuem o nome indicado            ||\n");
+    printf("||\t4. Visualizar todos os registros em ordem alfabética de nomes  ||\n");
+    printf("=========================================================================\n\n");
     scanf("%c", &select);
     do {
       c = getchar();
@@ -74,21 +80,7 @@ int main(int argc, char const *argv[]){
     
     case '4':
       system("clear");
-      
-      do{
-        printf("Digite o modo que deseja visualizar os contatos:\n");
-        printf("1 - ordem crescente\n");
-        printf("2 - ordem decrescente\n");
-        scanf("%c", &modo);  
-        
-        do{
-          c = getchar();
-        } 
-        while (c != '\n');
-      } 
-      while (modo < '1' || modo > '2');
-      system("clear");
-      visualizarTodosContatos(lista, modo);
+      visualizarTodosContatos(lista);
       voltar(); 
       break;
     
@@ -106,16 +98,6 @@ int main(int argc, char const *argv[]){
   return 0;
 }
 
-//------------------------------------------------------------------------------
-void menu() {
-  printf("\n=========================================================================\n");
-  printf("||\t0. Sair                                                        ||\n");
-  printf("||\t1. Inserir novo registro                                       ||\n");
-  printf("||\t2. Remover registros que possuem o nome indicado               ||\n");
-  printf("||\t3. Visualizar registros que possuem o nome indicado            ||\n");
-  printf("||\t4. Visualizar todos os registros em ordem alfabética de nomes  ||\n");
-  printf("=========================================================================\n\n");
-}
 //------------------------------------------------------------------------------
 Contato *carregaArquivo() {
   FILE *fp;
@@ -206,7 +188,7 @@ Contato *inserirContato(Contato * lista){
   getchar();
   
   do {
-    printf("Digite o celular do novo contato:\n");
+    printf("Digite o celular do novo contato(xxxxx-xxxx):\n");
     scanf("%[^\n]", novo->cel);
     getchar();
   }
@@ -217,25 +199,25 @@ Contato *inserirContato(Contato * lista){
   scanf("%[^\n]", novo->adress);
   getchar();
 
-  printf("Digite o cep do novo contato:\n");
+  printf("Digite o cep do novo contato(xxxxxxxx):\n");
 
   scanf(" %u", &novo->cep);
   printf("Digite a data de nascimento do novo contato:\n");
 
   do {
-    printf("Dia:\n");
+    printf("Dia(xx):\n");
     scanf(" %d", &dia);
   }
 
   while (dia < 1 || dia > 31);
 
   do {
-    printf("Mês:\n");
+    printf("Mês(xx):\n");
     scanf(" %d", &mes);
   }
 
   while (mes < 1 || mes > 12);
-  printf("Ano:\n");
+  printf("Ano(xxxx):\n");
   scanf(" %d", &ano);
   sprintf(day, "%i", dia);
   sprintf(month, "%i", mes);
@@ -305,30 +287,15 @@ void voltar(){
   } while (c != '\n');
 }
 //------------------------------------------------------------------------------
-void visualizarTodosContatos(Contato * lista, char modo){
+void visualizarTodosContatos(Contato * lista){
   Contato *aux;
-  if (modo == '1') {
-    for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox){
-      printf("%s\n", aux->name);
-      printf("%s\n", aux->cel);
-      printf("%s\n", aux->adress);
-      printf("%u\n", aux->cep);
-      printf("%s\n", aux->date);
-      printf("\n");
-    }
-  }
-  else {
-    for (aux = lista; aux->prox != NULL && lista != NULL; aux = aux->prox){
-    }
-    
-    for (; aux != NULL && lista != NULL; aux = aux->ante){
-      printf("%s\n", aux->name);
-      printf("%s\n", aux->cel);
-      printf("%s\n", aux->adress);
-      printf("%u\n", aux->cep);
-      printf("%s\n", aux->date);
-      printf("\n");
-    }
+  for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox){
+    printf("%s\n", aux->name);
+    printf("%s\n", aux->cel);
+    printf("%s\n", aux->adress);
+    printf("%u\n", aux->cep);
+    printf("%s\n", aux->date);
+    printf("\n");
   }
 }
 //------------------------------------------------------------------------------
