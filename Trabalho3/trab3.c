@@ -19,40 +19,103 @@ typedef struct contato {
 
 void menu();
 Contato *carregaArquivo();
-Contato *insertSort(Contato *, Contato *);
+Contato *insertionSort(Contato *, Contato *);
 
 //------------------------------------------------------------------------------
 main(int argc, char const *argv[]) {
   FILE *fp;
-  Contato *list;
-  int sel;
-  char c;
+  Contato *lista;
+  char select, c, modo, name[101];
 
-  if (list = (Contato *)malloc(sizeof(Contato)), list == NULL) {
-    printf("Erro ao alocar!\n");
-  }
+  lista = carregaArquivo();
 
-  list = readFile();
-  system("clear");
+  do {
+    menu();
+    scanf("%c", &select);
+    do {
+      c = getchar();
+    } 
+    while (c != '\n');
+
+    switch (select) {
+    
+    case '1':
+      system("clear");
+      lista = inserirRegistro(lista);
+      continuar();
+    break;
+   
+    case '2':
+      system("clear");
+      printf("digite o nome que deseja remover dos contatos:\n");
+      scanf("%[^\n]", name);
+      getchar();
+      lista = removerRegistros(lista, name);
+      strcpy(name, "");
+      continuar();
+    break;
+   
+    case '3':
+      system("clear");
+      printf("digite o nome que deseja ver dos contatos:\n");
+      scanf("%[^\n]", name);
+      getchar();
+      visualizarRegistroNome(lista, name);
+      strcpy(name, "");
+      continuar();
+    break;
+    
+    case '4':
+      system("clear");
+      
+      do{
+        printf("digite o modo que deseja visualizar os contatos:\n");
+        printf("1 - ordem crescente\n");
+        printf("2 - ordem decrescente\n");
+        scanf("%c", &modo);  
+        
+        do{
+          c = getchar();
+        } 
+        while (c != '\n');
+      } 
+      while (modo < '1' || modo > '2');
+      system("clear");
+      visualizarTodosRegistros(lista, modo);
+      continuar(); 
+      break;
+    
+    case '0':
+      if (fp = fopen("contatos.txt", "w"), fp == NULL) {
+        printf("erro ao abrir o arquivo!\n");
+        exit(1);
+      }
+      salvaLista(lista);
+      fclose(fp);
+    }
+    system("clear");
+  } 
+  while (select != '0');
   return 0;
 }
 
 //------------------------------------------------------------------------------
-void menu () {
-  printf("\n");
-  printf("\t 1 - Inserir novo registro\n\n");
-  printf("\t 2 - Remover registros que possuem o nome indicado\n\n");
-  printf("\t 3 - Visualizar registros que possuem o nome indicado\n\n");
-  printf("\t 4 - Visualizar todos os registros em ordem alfabética de nomes\n\n");
-  printf("\t 0 - Sair\n\n");
+void menu() {
+  printf("\n=========================================================================\n");
+  printf("||\t0. Sair                                                        ||\n");
+  printf("||\t1. Inserir novo registro                                       ||\n");
+  printf("||\t2. Remover registros que possuem o nome indicado               ||\n");
+  printf("||\t3. Visualizar registros que possuem o nome indicado            ||\n");
+  printf("||\t4. Visualizar todos os registros em ordem alfabética de nomes  ||\n");
+  printf("=========================================================================\n\n");
 }
 //------------------------------------------------------------------------------
-Contato *carregaArquivo () {
+Contato *carregaArquivo() {
   FILE *fp;
   Contato *contatos, *primeiro;
   char c;
 
-  if (fp = fopen ("contatos.txt", "r"), fp == NULL) {
+  if (fp = fopen("contatos.txt", "r"), fp == NULL) {
     printf("erro ao abrir o arquivo!\n");
     exit(1);
   }
@@ -75,7 +138,6 @@ Contato *carregaArquivo () {
     if (contatos = (Contato *)malloc(sizeof(Contato)), contatos == NULL) {
       printf("alocação falhou!\n");
     }
-
     fscanf(fp, "%[^\n]\n%s\n%[^\n]\n%u\n%s\n%c\n", contatos->name, contatos->cel, contatos->adress, &contatos->cep, contatos->date, &c);
     primeiro = insertSort(primeiro, contatos);
   }
@@ -85,29 +147,36 @@ Contato *carregaArquivo () {
   return primeiro;
 }
 //------------------------------------------------------------------------------
-Contato *insertSort (Contato *lista, Contato *termo) {
+Contato *insertionSort(Contato * lista, Contato * termo) {
   Contato *aux;
 
-  if (lista == NULL) {
+  if (lista == NULL)
+  {
     lista = termo;
     termo->ante = NULL;
     termo->prox = NULL;
     return lista;
   }
-  for (aux = lista; aux != NULL; aux = aux->prox) {
-    if (strcasecmp(aux->name, termo->name) > 0) {
+
+  for (aux = lista; aux != NULL; aux = aux->prox)
+  {
+    if (strcasecmp(aux->name, termo->name) > 0)
+    {
       termo->prox = aux;
       termo->ante = aux->ante;
       aux->ante = termo;
-      if (termo->ante != NULL) {
+      if (termo->ante != NULL)
+      {
         termo->ante->prox = termo;
       }
-      else {
+      else
+      {
         lista = termo;
       }
       return lista;
     }
-    if (aux->prox == NULL) {
+    if (aux->prox == NULL)
+    {
       termo->prox = NULL;
       termo->ante = aux;
       aux->prox = termo;
@@ -116,8 +185,7 @@ Contato *insertSort (Contato *lista, Contato *termo) {
   }
 }
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-Contato *inserirRegistro(Contato *lista) {
+Contato *inserirContato(Contato * lista) {
   Contato *novo;
   int dia, mes, ano;
   char day[3], month[3], year[5];
@@ -129,57 +197,64 @@ Contato *inserirRegistro(Contato *lista) {
   printf("Digite o nome do novo contato:\n");
   scanf("%[^\n]", novo->name);
   getchar();
-  do
-  {
+  
+  do {
     printf("Digite o celular do novo contato:\n");
     scanf("%[^\n]", novo->cel);
     getchar();
-  } while (!validaCelular(novo->cel));
+  }
+
+  while (!validaCelular(novo->cel));
   printf("Digite o endereço do novo contato:\n");
+
   scanf("%[^\n]", novo->adress);
   getchar();
+
   printf("Digite o cep do novo contato:\n");
+
   scanf(" %u", &novo->cep);
   printf("Digite a data de nascimento do novo contato:\n");
-  do
-  {
+
+  do {
     printf("Dia:\n");
     scanf(" %d", &dia);
-  } while (dia < 1 || dia > 31);
-  do
-  {
+  }
+
+  while (dia < 1 || dia > 31);
+
+  do {
     printf("Mês:\n");
     scanf(" %d", &mes);
-  } while (mes < 1 || mes > 12);
+  }
+
+  while (mes < 1 || mes > 12);
   printf("Ano:\n");
   scanf(" %d", &ano);
   sprintf(day, "%i", dia);
   sprintf(month, "%i", mes);
   sprintf(year, "%i", ano);
   sprintf(novo->date, "%s/%s/%s", day, month, year);
-  lista = insertSort(lista, novo);
+  lista = insertionSort(lista, novo);
   getchar();
   return lista;
 }
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-void salvaLista(Contato *lista) {
-  FILE *arq;
+void salvaLista(Contato * lista) {
+  FILE *fp;
   Contato *aux;
 
-  if (arq = fopen("contatos.txt", "w"), arq == NULL) {
+  if (fp = fopen("contatos.txt", "w"), fp == NULL) {
     printf("erro ao abrir o arquivo!\n");
     exit(1);
   }
 
   for (aux = lista; aux != NULL; aux = aux->prox) {
-    fprintf(arq, "%s\n", aux->name);
-    fprintf(arq, "%s\n", aux->cel);
-    fprintf(arq, "%s\n", aux->adress);
-    fprintf(arq, "%u\n", aux->cep);
-    fprintf(arq, "%s\n", aux->date);
-    fprintf(arq, "$\n");
+    fprintf(fp, "%s\n", aux->name);
+    fprintf(fp, "%s\n", aux->cel);
+    fprintf(fp, "%s\n", aux->adress);
+    fprintf(fp, "%u\n", aux->cep);
+    fprintf(fp, "%s\n", aux->date);
+    fprintf(fp, "$\n");
 
     if (aux != lista) {
       free(aux->ante);
@@ -189,22 +264,23 @@ void salvaLista(Contato *lista) {
     }
   }
 
-  fclose(arq);
+  fclose(fp);
+}
 //------------------------------------------------------------------------------
-int validaCelular(char celular[]) {
+int validaNumero(char cel[]) {
   int aux;
-  if (strlen(celular) != 10) {
+  if (strlen(cel) != 10) {
     puts("Número Invalido! Digite Novamente:");
     return 0;
   }
   else {
     for (aux = 0; aux < 10; aux++) {
-      if (!isdigit(celular[aux]) && aux != 5) {
+      if (!isdigit(cel[aux]) && aux != 5) {
         puts("Número Invalido! Digite Novamente:");
         return 0;
       }
       if (aux == 5) {
-        if (celular[aux] != '-') {
+        if (cel[aux] != '-') {
           puts("Número Invalido! Digite Novamente:");
           return 0;
         }
@@ -214,119 +290,104 @@ int validaCelular(char celular[]) {
   return 1;
 }
 //------------------------------------------------------------------------------
-void continuar()
-{
+void voltar(){
   char c;
-  printf("\naperte enter para continuar\n");
-  do
-  {
+  printf("\nAperte enter para voltar ao menu.\n");
+  do {
     c = getchar();
   } while (c != '\n');
 }
 //------------------------------------------------------------------------------
-void visualizarTodosRegistros(Contato * lista, char modo)
-{
+void visualizarTodosRegistros(Contato * lista, char modo){
   Contato *aux;
-  if (modo == '1')
-  {
-    for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox)
-    {
-      printf("%s\n", aux->nome);
-      printf("%s\n", aux->celular);
-      printf("%s\n", aux->endereco);
+  if (modo == '1') {
+    for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox){
+      printf("%s\n", aux->name);
+      printf("%s\n", aux->cel);
+      printf("%s\n", aux->adress);
       printf("%u\n", aux->cep);
-      printf("%s\n", aux->nascimento);
+      printf("%s\n", aux->date);
       printf("\n");
     }
   }
-  else
-  {
-    for (aux = lista; aux->prox != NULL && lista != NULL; aux = aux->prox)
-    {
+  else {
+    for (aux = lista; aux->prox != NULL && lista != NULL; aux = aux->prox){
     }
-    for (; aux != NULL && lista != NULL; aux = aux->ant)
-    {
-      printf("%s\n", aux->nome);
-      printf("%s\n", aux->celular);
-      printf("%s\n", aux->endereco);
+    
+    for (; aux != NULL && lista != NULL; aux = aux->ante){
+      printf("%s\n", aux->name);
+      printf("%s\n", aux->cel);
+      printf("%s\n", aux->adress);
       printf("%u\n", aux->cep);
-      printf("%s\n", aux->nascimento);
+      printf("%s\n", aux->date);
       printf("\n");
     }
   }
 }
 //------------------------------------------------------------------------------
-void visualizarRegistroNome(Contato * lista, char nome[])
-{
+void visualizarRegistronome(Contato * lista, char name[]) {
   Contato *aux;
   long long int cont = 0;
 
-  for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox)
-  {
-    if (!strcasecmp(aux->nome, nome))
-    {
-      printf("\n%s\n", aux->nome);
-      printf("%s\n", aux->celular);
-      printf("%s\n", aux->endereco);
+  for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox) {
+    if (!strcasecmp(aux->name, name)) {
+      printf("\n%s\n", aux->name);
+      printf("%s\n", aux->cel);
+      printf("%s\n", aux->adress);
       printf("%u\n", aux->cep);
-      printf("%s\n", aux->nascimento);
+      printf("%s\n", aux->date);
       printf("\n");
       cont++;
     }
   }
-  if (!cont)
-  {
+  if (!cont) {
     printf("\nnome não encontrado.\n");
   }
 }
 //------------------------------------------------------------------------------
-Contato *removerRegistros(Contato * lista, char nome[])
-{
+Contato *removerRegistros(Contato * lista, char name[]){
   Contato *aux, *aux1;
   int cont = 0;
 
-  for (aux = lista; aux != NULL; aux = aux->prox)
-  {
-    if (!strcasecmp(aux->nome, nome))
-    {
-      printf("\ncontato removido:\n");
-      printf("%s\n", aux->nome);
-      printf("%s\n", aux->celular);
-      printf("%s\n", aux->endereco);
+  for (aux = lista; aux != NULL; aux = aux->prox){
+    if (!strcasecmp(aux->name, name)) {
+      printf("\nContato removido:\n");
+      printf("%s\n", aux->name);
+      printf("%s\n", aux->cel);
+      printf("%s\n", aux->adress);
       printf("%u\n", aux->cep);
-      printf("%s\n", aux->nascimento);
+      printf("%s\n", aux->date);
       printf("\n");
-      if (aux->prox == NULL & aux->ant == NULL)
-      {
+
+      if (aux->prox == NULL & aux->ante == NULL){
         free(lista);
         return NULL;
       }
-      else if (aux->prox == NULL)
-      {
-        aux1 = aux->ant;
+
+      else if (aux->prox == NULL){
+        aux1 = aux->ante;
         free(aux);
         aux1->prox = NULL;
       }
-      else if (aux->ant == NULL)
-      {
+
+      else if (aux->ante == NULL){
         lista = aux->prox;
-        lista->ant = NULL;
+        lista->ante = NULL;
         free(aux);
         aux = lista;
       }
-      else
-      {
-        aux1 = aux->ant;
+
+      else {
+        aux1 = aux->ante;
         aux1->prox = aux->prox;
         aux1 = aux->prox;
-        aux1->ant = aux->ant;
+        aux1->ante = aux->ante;
         free(aux);
       }
       cont++;
     }
   }
-  if (!cont)
-  {
+  if (!cont){
     printf("\nnome não encontrado.\n");
   }
   return lista;
