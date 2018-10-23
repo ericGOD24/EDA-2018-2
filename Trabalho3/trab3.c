@@ -18,11 +18,18 @@ typedef struct contato {
 } Contato;
 
 void menu();
+void voltar();
+void salvaLista(Contato *);
+void visualizarContato(Contato *, char name[]); 
+void visualizarTodosContatos(Contato *, char);
+int validaNumero(char cel[]);
 Contato *carregaArquivo();
 Contato *insertionSort(Contato *, Contato *);
+Contato *inserirContato(Contato *);
+Contato *removerContato(Contato *, char name[]);
 
 //------------------------------------------------------------------------------
-main(int argc, char const *argv[]) {
+main(int argc, char const *argv[]){
   FILE *fp;
   Contato *lista;
   char select, c, modo, name[101];
@@ -41,35 +48,35 @@ main(int argc, char const *argv[]) {
     
     case '1':
       system("clear");
-      lista = inserirRegistro(lista);
-      continuar();
+      lista = inserirContato(lista);
+      voltar();
     break;
    
     case '2':
       system("clear");
-      printf("digite o nome que deseja remover dos contatos:\n");
+      printf("Digite o nome que deseja remover dos contatos:\n");
       scanf("%[^\n]", name);
       getchar();
-      lista = removerRegistros(lista, name);
+      lista = removerContato(lista, name);
       strcpy(name, "");
-      continuar();
+      voltar();
     break;
    
     case '3':
       system("clear");
-      printf("digite o nome que deseja ver dos contatos:\n");
+      printf("Digite o nome do contato que deseja ver:\n");
       scanf("%[^\n]", name);
       getchar();
-      visualizarRegistroNome(lista, name);
+      visualizarRegistro(lista, name);
       strcpy(name, "");
-      continuar();
+      voltar();
     break;
     
     case '4':
       system("clear");
       
       do{
-        printf("digite o modo que deseja visualizar os contatos:\n");
+        printf("Digite o modo que deseja visualizar os contatos:\n");
         printf("1 - ordem crescente\n");
         printf("2 - ordem decrescente\n");
         scanf("%c", &modo);  
@@ -82,7 +89,7 @@ main(int argc, char const *argv[]) {
       while (modo < '1' || modo > '2');
       system("clear");
       visualizarTodosRegistros(lista, modo);
-      continuar(); 
+      voltar(); 
       break;
     
     case '0':
@@ -185,7 +192,7 @@ Contato *insertionSort(Contato * lista, Contato * termo) {
   }
 }
 //------------------------------------------------------------------------------
-Contato *inserirContato(Contato * lista) {
+Contato *inserirContato(Contato * lista){
   Contato *novo;
   int dia, mes, ano;
   char day[3], month[3], year[5];
@@ -239,7 +246,7 @@ Contato *inserirContato(Contato * lista) {
   return lista;
 }
 //------------------------------------------------------------------------------
-void salvaLista(Contato * lista) {
+void salvaLista(Contato * lista){
   FILE *fp;
   Contato *aux;
 
@@ -267,7 +274,7 @@ void salvaLista(Contato * lista) {
   fclose(fp);
 }
 //------------------------------------------------------------------------------
-int validaNumero(char cel[]) {
+int validaNumero(char cel[]){
   int aux;
   if (strlen(cel) != 10) {
     puts("Número Invalido! Digite Novamente:");
@@ -298,7 +305,7 @@ void voltar(){
   } while (c != '\n');
 }
 //------------------------------------------------------------------------------
-void visualizarTodosRegistros(Contato * lista, char modo){
+void visualizarTodosContatos(Contato * lista, char modo){
   Contato *aux;
   if (modo == '1') {
     for (aux = lista; aux != NULL && lista != NULL; aux = aux->prox){
@@ -325,7 +332,7 @@ void visualizarTodosRegistros(Contato * lista, char modo){
   }
 }
 //------------------------------------------------------------------------------
-void visualizarRegistronome(Contato * lista, char name[]) {
+void visualizarContato(Contato * lista, char name[]){
   Contato *aux;
   long long int cont = 0;
 
@@ -345,7 +352,7 @@ void visualizarRegistronome(Contato * lista, char name[]) {
   }
 }
 //------------------------------------------------------------------------------
-Contato *removerRegistros(Contato * lista, char name[]){
+Contato *removerContato(Contato * lista, char name[]){
   Contato *aux, *aux1;
   int cont = 0;
 
