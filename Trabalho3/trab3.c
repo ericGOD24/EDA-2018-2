@@ -88,7 +88,7 @@ main(int argc, char const *argv[]){
       } 
       while (modo < '1' || modo > '2');
       system("clear");
-      visualizarTodosRegistros(lista, modo);
+      visualizarTodosContatos(lista, modo);
       voltar(); 
       break;
     
