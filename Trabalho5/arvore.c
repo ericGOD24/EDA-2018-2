@@ -60,6 +60,7 @@ No *loadTreeFromFile(char arquivo[]){
   fclose(arq);
   return raiz;
 }
+
 //------------------------------------------------------------------------------
 void insereNo(No *raiz, No *aux){
   if (raiz->num < aux->num){
@@ -188,14 +189,18 @@ No *rotaciona(No *raiz, No *pai, No *raizReal){
 }
 //------------------------------------------------------------------------------
 int verificaBalanceamento(No *raiz){
-  int dif;
+  int esq, dir, returnEsq, returnDir;
   if (raiz != NULL){
-    dif = getHeight(raiz->esquerda) - getHeight(raiz->direita);
-    if (dif < -1 || dif > 1){
+     esq = getHeight(raiz->esquerda);
+     dir = getHeight(raiz->direita);
+    if ((esq - dir) < -1 || (esq - dir) > 1){
       return 0;
     }
     else{
-      return verificaBalanceamento(raiz->esquerda) * verificaBalanceamento(raiz->direita);
+      returnDir = verificaBalanceamento(raiz->direita);
+      returnEsq = verificaBalanceamento(raiz->esquerda);
+   
+      return returnDir * returnEsq;
     }
   }
   return 1;

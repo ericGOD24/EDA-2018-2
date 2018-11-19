@@ -9,7 +9,6 @@
 
 void liberaArvore(No *raiz);
 No *selecionaArquivo();
-char menu();
 void limpaBuff();
 void continuar();
 
@@ -20,7 +19,21 @@ int main(){
   raiz = selecionaArquivo();
   do
   {
-    select = menu();
+    do{
+      system("clear");
+      printf("\t||=======================================================||\n");
+      printf("\t|| 1 - Mostrar arvore                                    ||\n");
+      printf("\t|| 2 - Verificar se a arvore é cheia                     ||\n");
+      printf("\t|| 3 - Procurar valor na arvore                          ||\n");
+      printf("\t|| 4 - Verificar altura da arvore                        ||\n");
+      printf("\t|| 5 - Remover valor da arvore                           ||\n");
+      printf("\t|| 6 - Mostrar valores da arvore usando algoritmos       ||\n");
+      printf("\t|| 7 - Balancear arvore                                  ||\n");
+      printf("\t|| 0 - Sair                                              ||\n");
+      printf("\t||=======================================================||\n");
+      scanf("%c", &select);
+      limpaBuff();
+    } while (select < '0' || select > '7');
     
     system("clear");
     
@@ -50,30 +63,30 @@ int main(){
       break;
     case '6':
       do {
-        printf("Escolha o algoritmo que deseja utlizar: \n\n");
-        printf("1 - InOrder: \n");
-        printf("2 - PreOrder: \n");
-        printf("3 - PostOrder: \n");
+        printf("\t||================||\n");
+        printf("\t|| 1 - InOrder:   ||\n");
+        printf("\t|| 2 - PreOrder:  ||\n");
+        printf("\t|| 3 - PostOrder: ||\n");
+        printf("\t||================||\n");
         scanf("%c", &select);
         limpaBuff();
       } while (select < '1' || select > '3');
+
+      system("clear");     
+
       switch (select){
       case '1':
-        system("clear");
         printInOrder(raiz);
         break;
       case '2':
-        system("clear");
         printPreOrder(raiz);
         break;
       case '3':
-        system("clear");
         printPostOrder(raiz);
         break;
       }
       break;
     case '7':
-      system("clear");
       raiz = balanceTree(raiz);
       showTree(raiz);
       break;
@@ -91,60 +104,31 @@ int main(){
 No *selecionaArquivo()
 {
   char arquivo;
-  char nomeArquivo[50];
+  static char nomeArquivo[30];
   No *raiz;
   do
   {
     system("clear");
-    printf("\n");
-    printf("Selecione um dos arquivos abaixo, ou digite 0 para utilizar um arquivo pessoal.\n\n");
-    printf("\t1 - bst1.txt\n\n");
-    printf("\t2 - bst2.txt\n\n");
-    printf("\t3 - bst3.txt\n\n");
-    printf("\t4 - bst4.txt\n\n");
-    printf("\t5 - bst5.txt\n\n");
-    printf("\t6 - bst6.txt\n\n");
-    printf("\t0 - Utilizar arquivo pessoal\n\n");
+    printf("\t||=================================||\n");
+    printf("\t||Selecione um dos arquivos abaixo.||\n");
+    printf("\t|| 1 - bst1.txt                    ||\n");
+    printf("\t|| 2 - bst2.txt                    ||\n");
+    printf("\t|| 3 - bst3.txt                    ||\n");
+    printf("\t|| 4 - bst4.txt                    ||\n");
+    printf("\t|| 5 - bst5.txt                    ||\n");
+    printf("\t|| 6 - bst6.txt                    ||\n");
+    printf("\t||=================================||\n");
     scanf("%c", &arquivo);
     limpaBuff();
-  } while (arquivo < '0' || arquivo > '6');
-  if (arquivo == '0')
-  {
-    printf("Digite o nome do seu arquivo (não é necessário digitar o tipo do arquivo): \n");
-    scanf("%s", nomeArquivo);
-    limpaBuff();
-    strcat(nomeArquivo, ".txt");
-    raiz = loadTreeFromFile(nomeArquivo);
-  }
-  else
-  {
-    strcat(nomeArquivo, "BSTs/bst");
-    nomeArquivo[strlen(nomeArquivo)] = arquivo;
-    strcat(nomeArquivo, ".txt");
-    raiz = loadTreeFromFile(nomeArquivo);
-  }
+  } while (arquivo < '1' || arquivo > '6');
+
+  strcat(nomeArquivo, "BSTs/bst");
+  nomeArquivo[strlen(nomeArquivo)] = arquivo;
+  strcat(nomeArquivo, ".txt");
+  // printf("%s", nomeArquivo);
+  raiz = loadTreeFromFile(nomeArquivo);
+
   return raiz;
-}
-////////////////////////////////////////////////////////////////////////////////
-char menu()
-{
-  char select;
-  do
-  {
-    system("clear");
-    printf("\n");
-    printf("\t1 - Mostrar arvore\n\n");
-    printf("\t2 - Verificar se a arvore é cheia\n\n");
-    printf("\t3 - Procurar valor na arvore\n\n");
-    printf("\t4 - Verificar altura da arvore\n\n");
-    printf("\t5 - Remover valor da arvore\n\n");
-    printf("\t6 - Mostrar valores da arvore usando algoritmos\n\n");
-    printf("\t7 - Balancear arvore\n\n");
-    printf("\t0 - Sair\n\n");
-    scanf("%c", &select);
-    limpaBuff();
-  } while (select < '0' || select > '7');
-  return select;
 }
 ////////////////////////////////////////////////////////////////////////////////
 void liberaArvore(No *raiz){
@@ -167,7 +151,7 @@ void limpaBuff()
 void continuar()
 {
   char c;
-  printf("\nAperte enter para continuar\n");
+  printf("\nAperte enter para voltar ao menu\n");
   do
   {
     c = getchar();
