@@ -5,9 +5,25 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "arvore.h"
 
 //------------------------------------------------------------------------------
 
+int verificaCheia(No *raiz);
+int verificaBalanceamento(No *raiz);
+
+No *rotaciona(No *raiz, No *pai, No *raizReal);
+No *rodaEsquerda(No *raiz, No *pai, No *raizReal);
+No *rodaDireita(No *raiz, No *pai, No *raizReal);
+No *removeRaiz(No *raiz);
+No *verificaValor(No *raiz, No *pai);
+No *procuraSucessor(No *Raiz);
+
+void insereNo(No *raiz, No *aux);
+void encheMatriz(int **matrixTree, char **matrixTreeChar, No *raiz, int altura, int nivel, int coluna);
+void mostraMatriz(int **matrixTree, char **matrixTreeChar, int height, int *retira);
+void retiraEspacos(char **matrixTreeChar, int height, int *retira);
+void contaElementos(No *raiz, int *elementos);
 //------------------------------------------------------------------------------
 
 No *loadTreeFromFile(char arquivo[]){
@@ -45,36 +61,29 @@ No *loadTreeFromFile(char arquivo[]){
   return raiz;
 }
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-void insereNo(No *raiz, No *aux)
-{
-  if (raiz->num < aux->num)
-  {
-    if (raiz->dir == NULL)
-    {
-      raiz->dir = aux;
+void insereNo(No *raiz, No *aux){
+  if (raiz->num < aux->num){
+    if (raiz->direita == NULL){
+      raiz->direita = aux;
     }
-    else
-    {
-      insereNo(raiz->dir, aux);
+    
+    else{
+      insereNo(raiz->direita, aux);
     }
   }
-  else
-  {
-    if (raiz->esquerda == NULL)
-    {
+
+  else{
+    if (raiz->esquerda == NULL){
       raiz->esquerda = aux;
     }
-    else
-    {
+
+    else{
       insereNo(raiz->esquerda, aux);
     }
   }
 }
 //------------------------------------------------------------------------------
-void isFull(No *raiz)
-{
+void isFull(No *raiz){
   int altura = getHeight(raiz);
   int elementosMax = (pow(2, altura)) - 1;
   int elementos = 0;
@@ -85,14 +94,12 @@ void isFull(No *raiz)
     printf("A arvore nao e cheia\n");
 }
 //------------------------------------------------------------------------------
-void contaElementos(No *raiz, int *elementos)
-{
+void contaElementos(No *raiz, int *elementos){
   if (raiz == NULL);
-  else
-  {
+  else{
     *elementos = *elementos + 1;
-    contaElementos(raiz->esq, elementos);
-    contaElementos(raiz->dir, elementos);
+    contaElementos(raiz->esquerda, elementos);
+    contaElementos(raiz->direita, elementos);
   }
 }
 //------------------------------------------------------------------------------
@@ -102,8 +109,7 @@ No *balanceTree(No *raiz){
     return raiz;
   }
 
-  if (!verificaBalanceamento(raiz)){
-    
+  if (!verificaBalanceamento(raiz)){ 
     do{
       raiz = rotaciona(raiz, NULL, raiz);
     } while (!verificaBalanceamento(raiz));
@@ -115,25 +121,20 @@ No *balanceTree(No *raiz){
   return raiz;
 }
 //------------------------------------------------------------------------------
-No *rodaDir(No *raiz, No *pai, No *raizReal)
-{
-  No *aux = raiz->dir;
-  if (pai != NULL)
-  {
-    if (pai->esquerda == raiz)
-    {
+No *rodaDireita(No *raiz, No *pai, No *raizReal){
+  No *aux = raiz->direita;
+  if (pai != NULL){
+    if (pai->esquerda == raiz){
       pai->esquerda = aux;
     }
-    else
-    {
-      pai->dir = aux;
+    else{
+      pai->direita = aux;
     }
-    raiz->dir = aux->esquerda;
+    raiz->direita = aux->esquerda;
     aux->esquerda = raiz;
   }
-  else
-  {
-    raiz->dir = aux->esquerda;
+  else{
+    raiz->direita = aux->esquerda;
     aux->esquerda = raiz;
     raizReal = aux;
   }
@@ -141,54 +142,45 @@ No *rodaDir(No *raiz, No *pai, No *raizReal)
   return raizReal;
 }
 //------------------------------------------------------------------------------
-No *rodaEsq(No *raiz, No *pai, No *raizReal)
-{
+No *rodaEsquerda(No *raiz, No *pai, No *raizReal){
   No *aux = raiz->esquerda;
-  if (pai != NULL)
-  {
-    if (pai->esquerda == raiz)
-    {
+  if (pai != NULL){
+    if (pai->esquerda == raiz){
       pai->esquerda = aux;
     }
-    else
-    {
-      pai->dir = aux;
+    
+    else{
+      pai->direita = aux;
     }
-    raiz->esquerda = aux->dir;
-    aux->dir = raiz;
+
+    raiz->esquerda = aux->direita;
+    aux->direita = raiz;
   }
-  else
-  {
-    raiz->esquerda = aux->dir;
-    aux->dir = raiz;
+  
+  else{
+    raiz->esquerda = aux->direita;
+    aux->direita = raiz;
     raizReal = aux;
   }
   return raizReal;
 }
 //------------------------------------------------------------------------------
-No *rotaciona(No *raiz, No *pai, No *raizReal)
-{
-  if (raiz != NULL)
-  {
-    if (!verificaBalanceamento(raiz))
-    {
+No *rotaciona(No *raiz, No *pai, No *raizReal){
+  if (raiz != NULL){
+    if (!verificaBalanceamento(raiz)){
       raizReal = rotaciona(raiz->esquerda, raiz, raizReal);
-      if (verificaBalanceamento(raiz))
-      {
+      if (verificaBalanceamento(raiz)){
         return raizReal;
       }
-      raizReal = rotaciona(raiz->dir, raiz, raizReal);
-      if (verificaBalanceamento(raiz))
-      {
+      raizReal = rotaciona(raiz->direita, raiz, raizReal);
+      if (verificaBalanceamento(raiz)){
         return raizReal;
       }
-      if (getHeight(raiz->esquerda) > getHeight(raiz->dir))
-      {
-        raizReal = rodaEsq(raiz, pai, raizReal);
+      if (getHeight(raiz->esquerda) > getHeight(raiz->direita)){
+        raizReal = rodaEsquerda(raiz, pai, raizReal);
       }
-      else
-      {
-        raizReal = rodaDir(raiz, pai, raizReal);
+      else{
+        raizReal = rodaDireita(raiz, pai, raizReal);
       }
     }
   }
@@ -198,35 +190,30 @@ No *rotaciona(No *raiz, No *pai, No *raizReal)
 int verificaBalanceamento(No *raiz){
   int dif;
   if (raiz != NULL){
-    dif = getHeight(raiz->esquerda) - getHeight(raiz->dir);
-    if (dif < -1 || dif > 1)
-    {
+    dif = getHeight(raiz->esquerda) - getHeight(raiz->direita);
+    if (dif < -1 || dif > 1){
       return 0;
     }
-    else
-    {
-      return verificaBalanceamento(raiz->esquerda) * verificaBalanceamento(raiz->dir);
+    else{
+      return verificaBalanceamento(raiz->esquerda) * verificaBalanceamento(raiz->direita);
     }
   }
   return 1;
 }
 //------------------------------------------------------------------------------
-No *removeValue(No *raiz, int num)
-{
+No *removeValue(No *raiz, int num){
   No *pai = NULL, *aux = raiz;
-  while (aux != NULL)
-  {
-    if (aux->num == num)
-    {
+  while (aux != NULL){
+    if (aux->num == num){
       break;
     }
     pai = aux;
-    if (aux->num < num)
-    {
-      aux = pai->dir;
+    
+    if (aux->num < num){
+      aux = pai->direita;
     }
-    else
-    {
+    
+    else{
       aux = pai->esquerda;
     }
   }
@@ -254,16 +241,16 @@ No *removeValue(No *raiz, int num)
 //------------------------------------------------------------------------------
 No *removeRaiz(No *raiz){
   No *aux;
-  if (raiz->dir != NULL || raiz->esquerda != NULL){
-    if (raiz->dir != NULL && raiz->esquerda != NULL){
+  if (raiz->direita != NULL || raiz->esquerda != NULL){
+    if (raiz->direita != NULL && raiz->esquerda != NULL){
       aux = procuraSucessor(raiz);
       free(aux);
       return raiz;
     }
     
     else{
-      if (raiz->dir != NULL){
-        aux = raiz->dir;
+      if (raiz->direita != NULL){
+        aux = raiz->direita;
         free(raiz);
         return aux;
       }
@@ -283,27 +270,27 @@ No *removeRaiz(No *raiz){
 }
 //------------------------------------------------------------------------------
 No *verificaValor(No *raiz, No *pai){
-  if (raiz->dir != NULL || raiz->esquerda != NULL){
-    if (raiz->dir != NULL && raiz->esquerda != NULL){
+  if (raiz->direita != NULL || raiz->esquerda != NULL){
+    if (raiz->direita != NULL && raiz->esquerda != NULL){
       return procuraSucessor(raiz);
     }
     
     else{
-      if (raiz->dir != NULL){
-        if (pai->dir == raiz){
-          pai->dir = raiz->dir;
+      if (raiz->direita != NULL){
+        if (pai->direita == raiz){
+          pai->direita = raiz->direita;
           return raiz;
         }
         
         else{
-          pai->esquerda = raiz->dir;
+          pai->esquerda = raiz->direita;
           return raiz;
         }
       }
       
       else{
-        if (pai->dir == raiz){
-          pai->dir = raiz->esquerda;
+        if (pai->direita == raiz){
+          pai->direita = raiz->esquerda;
           return raiz;
         }
         
@@ -317,7 +304,7 @@ No *verificaValor(No *raiz, No *pai){
   
   else{
     if (pai->num < raiz->num){
-      pai->dir = NULL;
+      pai->direita = NULL;
     }
     else{
       pai->esquerda = NULL;
@@ -331,7 +318,7 @@ No *procuraSucessor(No *raiz)
   No *sucessor, *pai, *aux;
   int num;
   
-  sucessor = raiz->dir;
+  sucessor = raiz->direita;
   pai = raiz;
   
   while (sucessor->esquerda != NULL){
@@ -350,8 +337,8 @@ int getHeight(No *raiz){
   if (raiz == NULL)
     return 0;
 
-  alturaEsquerda = getHeight(raiz->esq);
-  alturaDireita = getHeight(raiz->dir);
+  alturaEsquerda = getHeight(raiz->esquerda);
+  alturaDireita = getHeight(raiz->direita);
 
   if (alturaEsquerda > alturaDireita)
     return (alturaEsquerda + 1);
@@ -364,7 +351,7 @@ void printPostOrder(No *raiz)
   if (raiz != NULL)
   {
     printPostOrder(raiz->esquerda);
-    printPostOrder(raiz->dir);
+    printPostOrder(raiz->direita);
     printf("%d ", raiz->num);
   }
 }
@@ -375,7 +362,7 @@ void printPreOrder(No *raiz)
   {
     printf("%d ", raiz->num);
     printPreOrder(raiz->esquerda);
-    printPreOrder(raiz->dir);
+    printPreOrder(raiz->direita);
   }
 }
 //------------------------------------------------------------------------------
@@ -385,7 +372,7 @@ void printInOrder(No *raiz)
   {
     printInOrder(raiz->esquerda);
     printf("%d ", raiz->num);
-    printInOrder(raiz->dir);
+    printInOrder(raiz->direita);
   }
 }
 //------------------------------------------------------------------------------
@@ -525,10 +512,10 @@ void encheMatriz(int **matrixTree, char **matrixTreeChar, No *raiz, int altura, 
     *(*(matrixTreeChar + linha) + coluna - aux) = '/';
     encheMatriz(matrixTree, matrixTreeChar, raiz->esquerda, altura, linha + 1, coluna - aux);
   }
-  if (raiz->dir != NULL)
+  if (raiz->direita != NULL)
   {
     *(*(matrixTreeChar + linha) + coluna + aux) = '\\';
-    encheMatriz(matrixTree, matrixTreeChar, raiz->dir, altura, linha + 1, coluna + aux);
+    encheMatriz(matrixTree, matrixTreeChar, raiz->direita, altura, linha + 1, coluna + aux);
   }
 }
 //------------------------------------------------------------------------------
