@@ -12,13 +12,13 @@ No *selecionaArquivo();
 void limpaBuff();
 void continuar();
 
-int main(){
+
+int main(int argc, char const *argv[]){
   char select;
   No *raiz;
   int valor;
   raiz = selecionaArquivo();
-  do
-  {
+  do{
     do{
       system("clear");
       printf("\t||=======================================================||\n");
@@ -27,7 +27,7 @@ int main(){
       printf("\t|| 3 - Procurar valor na arvore                          ||\n");
       printf("\t|| 4 - Verificar altura da arvore                        ||\n");
       printf("\t|| 5 - Remover valor da arvore                           ||\n");
-      printf("\t|| 6 - Mostrar valores da arvore usando algoritmos       ||\n");
+      printf("\t|| 6 - Printar a árvore utilizando In, Pre ou Post       ||\n");
       printf("\t|| 7 - Balancear arvore                                  ||\n");
       printf("\t|| 0 - Sair                                              ||\n");
       printf("\t||=======================================================||\n");
@@ -100,14 +100,13 @@ int main(){
   } while (select != '0');
   return 0;
 }
-////////////////////////////////////////////////////////////////////////////////
-No *selecionaArquivo()
-{
+//------------------------------------------------------------------------------
+No *selecionaArquivo(){
   char arquivo;
   static char nomeArquivo[30];
   No *raiz;
-  do
-  {
+  
+  do{
     system("clear");
     printf("\t||=================================||\n");
     printf("\t||Selecione um dos arquivos abaixo.||\n");
@@ -125,12 +124,11 @@ No *selecionaArquivo()
   strcat(nomeArquivo, "BSTs/bst");
   nomeArquivo[strlen(nomeArquivo)] = arquivo;
   strcat(nomeArquivo, ".txt");
-  // printf("%s", nomeArquivo);
   raiz = loadTreeFromFile(nomeArquivo);
 
   return raiz;
 }
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 void liberaArvore(No *raiz){
   if (raiz != NULL){
     liberaArvore(raiz->esquerda);
@@ -138,22 +136,18 @@ void liberaArvore(No *raiz){
     free(raiz);
   }
 }
-////////////////////////////////////////////////////////////////////////////////
-void limpaBuff()
-{
+//------------------------------------------------------------------------------
+void limpaBuff(){
   char c;
-  do
-  {
+  do{
     c = getchar();
   } while (c != '\n');
 }
-////////////////////////////////////////////////////////////////////////////////
-void continuar()
-{
+//------------------------------------------------------------------------------
+void continuar(){
   char c;
   printf("\nAperte enter para voltar ao menu\n");
-  do
-  {
+  do{
     c = getchar();
   } while (c != '\n');
 }
