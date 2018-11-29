@@ -30,17 +30,20 @@ void glcm(int **, int, int , double **, int);
 void euclidiana(double **, double *, double *, int *, int *, int *);
 void imagensParaTreino(int *,int *,char *, FILE *, int **, int *, int *, int);
 
-//------------------------------ MAIN -----------------------------
-int main(int argc, char const *argv[]) {
+void salvaVetNormalizados(double **aspectos);
 
-  FILE *arq;
-  int **vetorImagens;
-  int linha, coluna, i, j, cont, pixel;
-  int acerto = 0, falsaRejeicao = 0, falsaAceitacao = 0;
-  double *mediaGrama, *mediaAsfalto;
-  double **aspectos;
-  char nomeArquivo[20] = "", aux;
-  static int asfalto[50], grama[50];
+  //------------------------------ MAIN -----------------------------
+  int main(int argc, char const *argv[])
+  {
+
+    FILE *arq;
+    int **vetorImagens;
+    int linha, coluna, i, j, cont, pixel;
+    int acerto = 0, falsaRejeicao = 0, falsaAceitacao = 0;
+    double *mediaGrama, *mediaAsfalto;
+    double **aspectos;
+    char nomeArquivo[20] = "", aux;
+    static int asfalto[50], grama[50];
 
     if(mediaGrama = (double*)calloc(536,sizeof(double)),mediaGrama == NULL){
       printf("alocação falhou!\n");
@@ -111,6 +114,8 @@ int main(int argc, char const *argv[]) {
 
   mediaPontos(aspectos,mediaGrama,mediaAsfalto);
 
+  salvaVetNormalizados(aspectos);
+
   for(i = 0; i<50; i++){
     free(*(aspectos+i));
   }
@@ -174,6 +179,8 @@ int main(int argc, char const *argv[]) {
   printf("Taxa de Acerto: %d%%\n",acerto*100/50);
   printf("Taxa de Falsa Aceitação: %d%%\n",falsaAceitacao*100/50);
   printf("Taxa de Falsa Rejeição: %d%%\n",falsaRejeicao*100/50);
+
+  salvaVetNormalizados(aspectos);
 
   for(i = 0; i<50; i++){
     free(*(aspectos+i));
@@ -508,4 +515,24 @@ void selecionaImagem(int *asfalto,int *grama,char *nomeArquivo,FILE *arq,int **v
   *linha -= 1;
   *coluna = *coluna/(*linha)+1;
   fclose(arq);
+}
+
+void salvaVetNormalizados(double **aspectos){
+
+  FILE *arquivo;
+  if (arquivo = fopen("vetoresNormalizados.txt", "a+"), arquivo == NULL){
+    printf("erro ao abrir o arquivo!\n");
+    exit(1);
+  }
+
+  
+  for( int i = 0; i < 50; i++){
+    for( int j = 0; j < 536; j++){
+     fprintf(arquivo, "%lf ", aspectos[i][j]); 
+    }
+    fprintf(arquivo, "\n");
+  }
+  
+
+  fclose(arquivo);
 }
