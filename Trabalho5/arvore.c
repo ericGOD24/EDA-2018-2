@@ -351,30 +351,24 @@ int getHeight(No *raiz){
     return (alturaDireita + 1);
 }
 //------------------------------------------------------------------------------
-void printPostOrder(No *raiz)
-{
-  if (raiz != NULL)
-  {
+void printPostOrder(No *raiz){
+  if (raiz != NULL){
     printPostOrder(raiz->esquerda);
     printPostOrder(raiz->direita);
     printf("%d ", raiz->num);
   }
 }
 //------------------------------------------------------------------------------
-void printPreOrder(No *raiz)
-{
-  if (raiz != NULL)
-  {
+void printPreOrder(No *raiz){
+  if (raiz != NULL){
     printf("%d ", raiz->num);
     printPreOrder(raiz->esquerda);
     printPreOrder(raiz->direita);
   }
 }
 //------------------------------------------------------------------------------
-void printInOrder(No *raiz)
-{
-  if (raiz != NULL)
-  {
+void printInOrder(No *raiz){
+  if (raiz != NULL){
     printInOrder(raiz->esquerda);
     printf("%d ", raiz->num);
     printInOrder(raiz->direita);

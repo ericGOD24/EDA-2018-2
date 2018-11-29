@@ -76,12 +76,18 @@ int main(int argc, char const *argv[]){
 
       switch (select){
       case '1':
+        showTree(raiz);
+        printf("\n");
         printInOrder(raiz);
         break;
       case '2':
+        showTree(raiz);
+        printf("\n");
         printPreOrder(raiz);
         break;
       case '3':
+        showTree(raiz);
+        printf("\n");
         printPostOrder(raiz);
         break;
       }
