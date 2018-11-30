@@ -33,74 +33,61 @@ int main(int argc, char const *argv[]){
 
   srand(time(NULL));
   int numCamadaOculta = atoi(argv[1]);
-  double **vetorDeEntrada = (double **)calloc(100, sizeof(double *));
+  double **matrizDeEntradas = (double **)calloc(100, sizeof(double *));
 
   printf("\n--------------------------------------------------------\n");
   printf("\tNumero de neuronios na camada oculta = %d\n", numCamadaOculta);
   printf("--------------------------------------------------------\n");
 
-  for (int i = 0; i < 100; i++)
-  {
-    vetorDeEntrada[i] = (double *)calloc(ENTRADA + 1, sizeof(double));
+  for (int i = 0; i < 100; i++){
+    matrizDeEntradas[i] = (double *)calloc(ENTRADA + 1, sizeof(double));
   }
 
   FILE *arquivo = NULL;
-  if (arquivo = fopen("vetoresNormalizados.txt", "r"), arquivo == NULL)
-  {
+  if (arquivo = fopen("vetoresNormalizados.txt", "r"), arquivo == NULL){
     printf("Erro ao abrir o arquivo!\n");
     exit(1);
   }
 
-  for (int i = 0; i < 100; i++)
-  {
-    if ((i < 25) || ((i > 49) && (i < 75)))
-    {
-      vetorDeEntrada[i][0] = 1;
+  for (int i = 0; i < 100; i++){
+    if ((i < 25) || ((i > 49) && (i < 75))){
+      matrizDeEntradas[i][0] = 1;
     }
 
-    for (int j = 1; j < ENTRADA + 1; j++)
-    {
-      fscanf(arquivo, "%lf", &vetorDeEntrada[i][j]);
+    for (int j = 1; j < ENTRADA + 1; j++){
+      fscanf(arquivo, "%lf", &matrizDeEntradas[i][j]);
     }
   }
 
-  Neuronio **camadaEntrada = (Neuronio **)calloc(ENTRADA, sizeof(Neuronio *));
-  Neuronio **camadaOculta = (Neuronio **)calloc(numCamadaOculta, sizeof(Neuronio *));
+  Neuronio *camadaEntrada = (Neuronio *)calloc(ENTRADA, sizeof(Neuronio));
+  Neuronio *camadaOculta = (Neuronio *)calloc(numCamadaOculta, sizeof(Neuronio));
   Neuronio *camadaSaida = novoNeuronio();
 
-  for (int i = 0; i < ENTRADA; i++)
-  {
-    camadaEntrada[i] = novoNeuronio();
-    pesoAleatorio(camadaEntrada[i]);
-    escalarAleatorio(camadaEntrada[i]);
+  for (int i = 0; i < ENTRADA; i++){
+    pesoAleatorio(&camadaEntrada[i]);
+    escalarAleatorio(&camadaEntrada[i]);
   }
 
-  for (int i = 0; i < numCamadaOculta; i++)
-  {
-    camadaOculta[i] = novoNeuronio();
-    pesoAleatorio(camadaOculta[i]);
-    escalarAleatorio(camadaOculta[i]);
+  for (int i = 0; i < numCamadaOculta; i++){
+    pesoAleatorio(&camadaOculta[i]);
+    escalarAleatorio(&camadaOculta[i]);
   }
 
   double treinoGrama[25][ENTRADA + 1];
   double treinoAsfalto[25][ENTRADA + 1];
 
-  for (int i = 0; i < 25; i++)
-  {
+  for (int i = 0; i < 25; i++){
     int indice = rand() % (50);
 
-    for (int j = 0; j < ENTRADA + 1; j++)
-    {
-      if (indice < 25)
-      {
-        treinoGrama[i][j] = vetorDeEntrada[indice][j];
-        treinoAsfalto[i][j] = vetorDeEntrada[indice + 25][j];
+    for (int j = 0; j < ENTRADA + 1; j++){
+      if (indice < 25){
+        treinoGrama[i][j] = matrizDeEntradas[indice][j];
+        treinoAsfalto[i][j] = matrizDeEntradas[indice + 25][j];
       }
 
-      else
-      {
-        treinoGrama[i][j] = vetorDeEntrada[indice + 25][j];
-        treinoAsfalto[i][j] = vetorDeEntrada[indice + 50][j];
+      else{
+        treinoGrama[i][j] = matrizDeEntradas[indice + 25][j];
+        treinoAsfalto[i][j] = matrizDeEntradas[indice + 50][j];
       }
     }
   }
@@ -115,24 +102,25 @@ int main(int argc, char const *argv[]){
 
   //  numero_de_epocas+=1;
   //}while(numero_de_epocas<=1000 || erro_geral>limiar_do_erro_geral);
-  //-----------------------------------------------------//
+
 
   for (int i = 0; i < 100; i++){
-    free(vetorDeEntrada[i]);
+    free(matrizDeEntradas[i]);
   }
 
   for (int i = 0; i < ENTRADA; i++){
-    free(camadaEntrada[i]);
+    free(camadaEntrada);
   }
 
   for (int i = 0; i < numCamadaOculta; i++){
-    free(camadaOculta[i]);
+    free(camadaOculta);
   }
 
   free(camadaSaida);
   free(erros);
-  
-  return 0;
+  fclose(arquivo);
+
+ return 0;
 }
 //------------------------------------------------------------------------------
 Neuronio *novoNeuronio(){
@@ -172,15 +160,14 @@ double entradasXpesos (double *p, double *peso, double escalar){
 }
 //------------------------------------------------------------------------------
 void pesoAleatorio(Neuronio *n){
-
     n->peso = (double *)calloc(ENTRADA, sizeof(double)); 
-
+  
     for (int i = 0; i < ENTRADA; i++){
       int aleatorio = (rand() % 32767) - 16384;
       n->peso[i] = aleatorio;
     }
   }
-
+//------------------------------------------------------------------------------
 void escalarAleatorio(Neuronio *n){
   n->escalar = (rand() % 32767) - 16384;
 }
