@@ -35,9 +35,9 @@ int main(int argc, char const *argv[]){
   int numCamadaOculta = atoi(argv[1]);
   double **matrizDeEntradas = (double **)calloc(100, sizeof(double *));
 
-  printf("\n--------------------------------------------------------\n");
-  printf("\tNumero de neuronios na camada oculta = %d\n", numCamadaOculta);
-  printf("--------------------------------------------------------\n");
+  printf("\n========================================================\n");
+  printf("||\tNumero de neuronios na camada oculta = %d      ||\n", numCamadaOculta);
+  printf("========================================================\n");
 
   for (int i = 0; i < 100; i++){
     matrizDeEntradas[i] = (double *)calloc(ENTRADA + 1, sizeof(double));
@@ -55,32 +55,40 @@ int main(int argc, char const *argv[]){
     }
 
     for (int j = 1; j < ENTRADA + 1; j++){
-      fscanf(arquivo, "%lf", &matrizDeEntradas[i][j]);
+      fscanf(arquivo, " %lf", &matrizDeEntradas[i][j]);
     }
   }
 
-  Neuronio *camadaEntrada = (Neuronio *)calloc(ENTRADA, sizeof(Neuronio));
-  Neuronio *camadaOculta = (Neuronio *)calloc(numCamadaOculta, sizeof(Neuronio));
+  Neuronio **camadaEntrada = (Neuronio **)calloc(ENTRADA, sizeof(Neuronio*));
+  Neuronio **camadaOculta = (Neuronio **)calloc(numCamadaOculta, sizeof(Neuronio*));
   Neuronio *camadaSaida = novoNeuronio();
 
+  pesoAleatorio(camadaSaida);
+  escalarAleatorio(camadaSaida);
+
   for (int i = 0; i < ENTRADA; i++){
-    pesoAleatorio(&camadaEntrada[i]);
-    escalarAleatorio(&camadaEntrada[i]);
+    camadaEntrada[i] = novoNeuronio();
+    pesoAleatorio(camadaEntrada[i]);
+    escalarAleatorio(camadaEntrada[i]);
   }
 
   for (int i = 0; i < numCamadaOculta; i++){
-    pesoAleatorio(&camadaOculta[i]);
-    escalarAleatorio(&camadaOculta[i]);
+    camadaOculta[i] = novoNeuronio();
+    pesoAleatorio(camadaOculta[i]);
+    escalarAleatorio(camadaOculta[i]);
   }
 
   double treinoGrama[25][ENTRADA + 1];
   double treinoAsfalto[25][ENTRADA + 1];
   static int visitados[50];    
+  int indice;
+
   for (int i = 0; i < 25; i++){
     do{
-        int indice = rand() % (50);
-    }while(visitados[indice] == 1);
+        indice = rand() % (50);
+      }while(visitados[indice] == 1);
     visitados[indice] = 1;
+
     for (int j = 0; j < ENTRADA + 1; j++){
       if (indice < 25){
         treinoGrama[i][j] = matrizDeEntradas[indice][j];
@@ -94,39 +102,56 @@ int main(int argc, char const *argv[]){
     }
   }
   
+  double resultadoEntradasAsfalto[25][ENTRADA];
+  double resultadoEntradasGrama[25][ENTRADA];
+
    for(int i = 0; i < 25; i++){
        for(int j = 0; j < ENTRADA; j++){ 
             resultadoEntradasGrama[i][j] = calculoNucleo(camadaEntrada[j],treinoGrama[i]);
             resultadoEntradasAsfalto[i][j] = calculoNucleo(camadaEntrada[j],treinoAsfalto[i]);
        }
    }
-   
-  double *erros = (double *)calloc(50, sizeof(double)); //vetor de erros com 50 posicoes
-  double erro_geral = 1;                                //erro geral = sum(erros[i]^2)/50
-  double limiar_do_erro_geral = 0.2;                    //erro_geral deve ser = ou menor que isso
-  int numero_de_epocas = 0;                             //vai de 0 a 1000, ou de 0 a x se erro_geral<=limiar_do_erro_geral
-  double taxa_de_aprendizagem = 0.45;                   //taxa de aprendizagem para a rede neural
-  //treinar a rede neural
-  //do{
 
-  //  numero_de_epocas+=1;
-  //}while(numero_de_epocas<=1000 || erro_geral>limiar_do_erro_geral);
+   double resultadoOcultaAsfalto[25][numCamadaOculta];
+   double resultadoOcultaGrama[25][numCamadaOculta];
 
+   for (int i = 0; i < 25; i++){
+     for (int j = 0; j < numCamadaOculta; j++){
+       resultadoOcultaGrama[i][j] = calculoNucleo(camadaOculta[j], resultadoEntradasGrama[i]);
+       resultadoOcultaAsfalto[i][j] = calculoNucleo(camadaOculta[j], resultadoEntradasAsfalto[i]);
+     }
+  }
+
+  double resultadoSaidaAsfalto[25];
+  double resultadoSaidaGrama[25];
+
+  for (int i = 0; i < 25; i++){
+    resultadoSaidaGrama[i] = calculoNucleo(camadaSaida, resultadoOcultaGrama[i]);
+    resultadoSaidaAsfalto[i] = calculoNucleo(camadaSaida, resultadoOcultaAsfalto[i]);
+  }
+  
+  
+  for (int i = 0; i < 25; i++){
+    printf("resultado asfalto: %lf\n", resultadoSaidaAsfalto[i]);
+    printf("resultado grama: %lf\n", resultadoSaidaGrama[i]);
+  }
 
   for (int i = 0; i < 100; i++){
     free(matrizDeEntradas[i]);
   }
+  free(matrizDeEntradas);
 
   for (int i = 0; i < ENTRADA; i++){
-    free(camadaEntrada);
+    free(camadaEntrada[i]);
   }
+  free(camadaEntrada);
 
   for (int i = 0; i < numCamadaOculta; i++){
-    free(camadaOculta);
+    free(camadaOculta[i]);
   }
+  free(camadaOculta);
 
   free(camadaSaida);
-  free(erros);
   fclose(arquivo);
 
  return 0;
