@@ -75,10 +75,12 @@ int main(int argc, char const *argv[]){
 
   double treinoGrama[25][ENTRADA + 1];
   double treinoAsfalto[25][ENTRADA + 1];
-
+  static int visitados[50];    
   for (int i = 0; i < 25; i++){
-    int indice = rand() % (50);
-
+    do{
+        int indice = rand() % (50);
+    }while(visitados[indice] == 1);
+    visitados[indice] = 1;
     for (int j = 0; j < ENTRADA + 1; j++){
       if (indice < 25){
         treinoGrama[i][j] = matrizDeEntradas[indice][j];
@@ -91,7 +93,14 @@ int main(int argc, char const *argv[]){
       }
     }
   }
-
+  
+   for(int i = 0; i < 25; i++){
+       for(int j = 0; j < ENTRADA; j++){ 
+            resultadoEntradasGrama[i][j] = calculoNucleo(camadaEntrada[j],treinoGrama[i]);
+            resultadoEntradasAsfalto[i][j] = calculoNucleo(camadaEntrada[j],treinoAsfalto[i]);
+       }
+   }
+   
   double *erros = (double *)calloc(50, sizeof(double)); //vetor de erros com 50 posicoes
   double erro_geral = 1;                                //erro geral = sum(erros[i]^2)/50
   double limiar_do_erro_geral = 0.2;                    //erro_geral deve ser = ou menor que isso
