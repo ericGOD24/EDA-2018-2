@@ -1,0 +1,16 @@
+  Tentamos implementar o backpropagation mas sem muito êxito nas interações internas
+das camadas (principalmente Oculta e camada Entrada). No entanto, acreditamos que as 
+operações realizadas dentro das funções conseguiriam sanar a questão de "gradiente" e
+de "Ajuste" dos neurônios.
+
+  Por conta de não conseguirmos implementar esse trecho optamos por deixá-lo sem 
+que interfira na condição do código (por tanto ele compila). Além disso ele faz a 
+distribuição e criação aleatória dos pesos e do "bias" dentro dos neuronios, e 
+faz a "primeira", interação da camada de treinamento e teste. Já que não conseguimos 
+colocar o backpropagation funcionando.
+
+
+Para compilação:  gcc Trab6.c -o bin -lm
+Para execução:    ./bin 2
+
+Sendo esse 2 podendo ser alterado a partir de um número inteiro de sua preferência.
